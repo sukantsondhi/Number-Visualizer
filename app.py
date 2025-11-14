@@ -19,17 +19,25 @@ app = Flask(__name__, static_folder='static')
 CORS(app)
 
 # Load the trained model
-MODEL_PATH = 'models/mnist_model.h5'
+MODEL_DIR = 'models'
+MODEL_PATH_KERAS = os.path.join(MODEL_DIR, 'mnist_model.keras')
+MODEL_PATH_H5 = os.path.join(MODEL_DIR, 'mnist_model.h5')
 model = None
 
 def load_model():
     """Load the trained MNIST model."""
     global model
-    if os.path.exists(MODEL_PATH):
-        model = tf.keras.models.load_model(MODEL_PATH)
-        print(f"Model loaded from {MODEL_PATH}")
+    # Prefer modern Keras format if available, otherwise fall back to legacy HDF5
+    if os.path.exists(MODEL_PATH_KERAS):
+        model = tf.keras.models.load_model(MODEL_PATH_KERAS)
+        print(f"Model loaded from {MODEL_PATH_KERAS}")
+    elif os.path.exists(MODEL_PATH_H5):
+        model = tf.keras.models.load_model(MODEL_PATH_H5)
+        print(f"Model loaded from {MODEL_PATH_H5}")
+        print("Note: Consider re-saving the model in .keras format for future compatibility.")
     else:
-        print(f"Warning: Model not found at {MODEL_PATH}")
+        print("Warning: No model file found in 'models/'.")
+        print("Expected one of: 'models/mnist_model.keras' or 'models/mnist_model.h5'")
         print("Please train the model first by running: python train_model.py")
 
 def preprocess_image(image):

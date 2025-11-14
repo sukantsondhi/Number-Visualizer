@@ -33,6 +33,7 @@ models/*.h5
 # ML Data
 *.npz
 training_history.png
+static/metrics/training_history.png
 
 # Jupyter Notebook
 .ipynb_checkpoints

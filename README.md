@@ -36,7 +36,7 @@ A machine learning web application that recognizes handwritten digits using a Co
 ## Installation
 
 ### Prerequisites
-- Python 3.8 or higher
+- Python 3.10 or 3.11 (recommended)
 - pip package manager
 
 ### Setup Instructions
@@ -60,8 +60,8 @@ A machine learning web application that recognizes handwritten digits using a Co
    This will:
    - Download the MNIST dataset automatically
    - Train a CNN model (takes 5-10 minutes)
-   - Save the trained model to `models/mnist_model.h5`
-   - Generate a training history plot
+   - Save the trained model to `models/mnist_model.keras` (modern format)
+   - Generate a training history plot at `static/metrics/training_history.png`
 
 4. **Run the web application**
    ```bash
@@ -72,6 +72,16 @@ A machine learning web application that recognizes handwritten digits using a Co
    ```bash
    FLASK_DEBUG=true python app.py
    ```
+### One-liner (Windows)
+
+Prefer a single command that sets everything up? Use the helper script:
+
+```powershell
+scripts\run.ps1
+```
+
+It will create/activate a venv, install dependencies, train the model if needed, and start the app.
+
 
 5. **Open your browser**
    Navigate to `http://localhost:5000`
@@ -111,10 +121,15 @@ Number-Visualizer/
 │   ├── index.html       # Main HTML page
 │   ├── style.css        # Styling
 │   └── script.js        # JavaScript logic
-└── training_history.png  # Training plot (generated)
+│   └── metrics/          # Generated training artifacts
+│       └── training_history.png
+└── models/               # Trained models (generated)
+   └── mnist_model.keras
 ```
 
-## Model Performance
+## Model Format & Performance
+
+The model is saved in the native Keras format (`.keras`). The server will also accept legacy HDF5 (`.h5`) if present, but `.keras` is preferred for forward compatibility.
 
 The trained CNN model achieves:
 - **Test Accuracy**: ~99%
@@ -204,6 +219,19 @@ Health check endpoint
 - Make sure all dependencies are installed
 - Verify Python version is 3.8 or higher
 
+### TensorFlow import errors
+- Ensure your virtual environment uses Python 3.10 or 3.11
+- Reinstall dependencies inside the venv:
+   ```powershell
+   .\.venv\Scripts\Activate.ps1
+   python -m pip install --upgrade pip
+   pip install -r requirements.txt
+   ```
+   Then verify:
+   ```powershell
+   python -c "import tensorflow as tf; print(tf.__version__)"
+   ```
+
 ## Security
 
 This application implements several security best practices:
@@ -219,6 +247,15 @@ For production deployment, additional security measures should be implemented:
 - Add authentication if needed
 - Use environment variables for configuration
 - Regular security audits and updates
+
+## PR Readiness Checklist
+
+Use this checklist when opening a pull request:
+- App runs locally: `python app.py` serves UI and `/predict` works
+- Model present or reproducible: `python train_model.py` succeeds
+- README updated with any changes to setup or run
+- No large, unused artifacts committed (e.g., datasets, temporary files)
+- Code adheres to project style and keeps changes minimal and focused
 
 ## Contributing
 

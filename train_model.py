@@ -244,8 +244,11 @@ def plot_training_history(history):
     plt.grid(True)
     
     plt.tight_layout()
-    plt.savefig('training_history.png')
-    print("Training history plot saved as 'training_history.png'")
+    # Ensure metrics dir exists (so frontend can serve the plot if desired)
+    os.makedirs(os.path.join('static', 'metrics'), exist_ok=True)
+    plot_path = os.path.join('static', 'metrics', 'training_history.png')
+    plt.savefig(plot_path)
+    print(f"Training history plot saved to '{plot_path}'")
 
 def main():
     """Main training function."""
@@ -281,8 +284,8 @@ def main():
     print(f"Test accuracy: {test_accuracy * 100:.2f}%")
     print(f"Test loss: {test_loss:.4f}")
     
-    # Save model
-    model_path = 'models/mnist_model.h5'
+    # Save model (prefer modern Keras format)
+    model_path = os.path.join('models', 'mnist_model.keras')
     model.save(model_path)
     print(f"\nModel saved to: {model_path}")
     
